@@ -136,71 +136,41 @@ public class alphabeta {
 			System.out.printf("%d",result);
 			return;
 		}
-		//if(turn==1) //max
-			int v=-20000*turn;
-			int tmp=0;
-			for(int i=0;i<table_size;i++)
+		int v=-20000*turn;
+		int tmp=0;
+		for(int i=0;i<table_size;i++)
+		{
+			for(int j=0;j<table_size;j++)
 			{
-				for(int j=0;j<table_size;j++)
+				if(state[i][j]==0&&neighbor(i,j)==true)
 				{
-					if(state[i][j]==0&&neighbor(i,j)==true)
+					state[i][j]=turn;
+					if(turn==1)
+						tmp=MIN(state,2000,-2000,-turn);
+					else
+						tmp=MAX(state,2000,-2000,-turn);
+					if(v<tmp&&turn==1||v>tmp&&turn==-1)
 					{
-						state[i][j]=turn;
-						if(turn==1)
-							tmp=MIN(state,2000,-2000,turn);
-						else
-							tmp=MAX(state,2000,-2000,turn);
-						if(v<tmp&&turn==1||v>tmp&&turn==-1)
-						{
-							v=tmp;
-							action[0]=i;
-							action[1]=j;
-						}
-						else if(v==tmp&&Math.random()>0.6)
-						{
-							v=tmp;
-							action[0]=i;
-							action[1]=j;
-						}
-						state[i][j]=0;
-						System.out.printf("%d,%d,%d\n",i,j,tmp);
+						v=tmp;
+						action[0]=i;
+						action[1]=j;
 					}
+					else if(v==tmp&&Math.random()>0.6)
+					{
+						v=tmp;
+						action[0]=i;
+						action[1]=j;
+					}
+					state[i][j]=0;
+					System.out.printf("%d,%d,%d\n",i,j,tmp);
 				}
 			}
-			state[action[0]][action[1]]=turn;
-			if(turn==1)
-				buttons[action[0]][action[1]].setIcon(OO);
-			else
-				buttons[action[0]][action[1]].setIcon(XX);
-		// if(turn==-1) //min
-		// {
-			// int v=20000;
-			// for(int i=0;i<table_size;i++)
-			// {
-				// for(int j=0;j<table_size;j++)
-				// {
-					// if(state[i][j]==0&&neighbor(i,j)==true)
-					// {
-						// state[i][j]=-1;
-						// int tmp=MAX(state,2000,-2000,1);
-						// alpha=Math.min(tmp,alpha);
-						// if(v>tmp)
-						// {
-							// v=tmp;
-							// action[0]=i;
-							// action[1]=j;
-						// }
-						// else if(v==tmp&&Math.random()>0.6)
-						// {
-							// v=tmp;
-							// action[0]=i;
-							// action[1]=j;
-						// }
-						// state[i][j]=0;
-						// System.out.printf("%d,%d,%d\n",i,j,tmp);
-					// }
-				// }
-			// }
+		}
+		state[action[0]][action[1]]=turn;
+		if(turn==1)
+			buttons[action[0]][action[1]].setIcon(OO);
+		else
+			buttons[action[0]][action[1]].setIcon(XX);
 			// if(v==2000)
 			// {
 				// JOptionPane.showInternalMessageDialog(frame.getContentPane(), "AI surrender!","Information", JOptionPane.INFORMATION_MESSAGE);	
@@ -278,9 +248,73 @@ public class alphabeta {
 	}
 	static private boolean terminal(int[][] state,int alpha,int beta,int step)
 	{
-		if(step==10)
-			return true;
-		else return false;
+		for(int i=0;i<table_size;i++)
+		{
+			//横
+			int j=0;
+			int count=0;
+			int k=0;
+			for(;count<5&&j<table_size;j++)
+			{
+				if(state[i][j]==side)
+					count++;
+				if(count==5)
+					return side*2000;
+				if(state[i][j]!=side)
+					count=0;
+			}
+			//竖
+			for(j=0;count<5&&j<table_size;j++)
+			{
+				if(state[j][i]==side)
+					count++;
+				if(count==5)
+					return true;
+				if(state[j][i]!=side)
+					count=0;
+			}
+			//左上-右下
+			for(j=0,k=i,count=0;count<5&&k<table_size;j++,k++)
+			{
+				if(state[k][j]==side)
+					count++;
+				if(count==5)
+					return true;
+				if(state[k][j]!=side)
+					count=0;
+			}
+			//左上-右下
+			for(j=0,k=i,count=0;count<5&&k<table_size;j++,k++)
+			{
+				if(state[j][k]==side)
+					count++;
+				if(count==5)
+					return true;
+				if(state[j][k]!=side)
+					count=0;
+			}
+			//右上-左下
+			for(j=0,k=i,count=0;count<5&&k>=0;j++,k--)
+			{
+				if(state[j][k]==side)
+					count++;
+				if(count==5)
+					return true;
+				if(state[j][k]!=side)
+					count=0;
+			}
+			//右上-左下
+			for(j=i,k=table_size-1,count=0;count<5&&k>=0&&j<table_size;j++,k--)
+			{
+				if(state[j][k]==side)
+					count++;
+				if(count==5)
+					return true;
+				if(state[j][k]!=side)
+					count=0;
+			}
+		}
+		return false;
 	}
 	static private int utility(int[][] state,int side)
 	{
