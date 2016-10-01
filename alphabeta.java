@@ -176,9 +176,6 @@ public class alphabeta {
 				// JOptionPane.showInternalMessageDialog(frame.getContentPane(), "AI surrender!","Information", JOptionPane.INFORMATION_MESSAGE);	
 				// return;
 			// }
-			// state[action[0]][action[1]]=-1;
-			// buttons[action[0]][action[1]].setIcon(XX);
-			// buttons[action[0]][action[1]].requestFocus();
 		System.out.printf("decide, %d,%d\n",action[0],action[1]);
 	}
 	static boolean neighbor(int a,int b)
@@ -246,8 +243,9 @@ public class alphabeta {
 		}
 		return v;
 	}
-	static private boolean terminal(int[][] state,int alpha,int beta,int step)
+	static private boolean terminal(int[][] state,int side)
 	{
+		int max_count=0;
 		for(int i=0;i<table_size;i++)
 		{
 			//ºá
@@ -259,7 +257,7 @@ public class alphabeta {
 				if(state[i][j]==side)
 					count++;
 				if(count==5)
-					return side*2000;
+					return true;
 				if(state[i][j]!=side)
 					count=0;
 			}
